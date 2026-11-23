@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pdf
+*_extracted.md
+*_zh.md
+.DS_Store
