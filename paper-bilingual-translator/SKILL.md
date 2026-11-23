@@ -88,3 +88,10 @@ Save the final translated Markdown in the same directory as the original PDF, us
 
 - Input: `/path/to/paper.pdf`
 - Output: `/path/to/paper.md`
+
+## Release & Distribution Workflow (`BilingualReader.html`)
+
+Whenever pushing a new version (`V<N>`) of `BilingualReader.html` to GitHub:
+1. Update the version badge (`V<N>`), title, and built-in changelog modal in `BilingualReader.html`, plus `CHANGELOG.md` and `README.md`.
+2. Commit and push to GitHub.
+3. Copy the latest `BilingualReader.html` as `BilingualReader_V<N>.html` and upload it directly to the **root level** of the Google Drive `Paper_Translate` folder (`1tSvWXtaXRlWVBxhE9dV8ABa9OCXloIlI`) using `gdrive mutate upload` (or `gdrive mutate update` if the same version filename already exists).

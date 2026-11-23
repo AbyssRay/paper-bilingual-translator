@@ -20,7 +20,8 @@
 
 ```text
 .
-├── BilingualReader.html                     # 軌道 B：Zero-CDN 離線單檔雙欄閱讀器
+├── BilingualReader.html                     # 軌道 B：Zero-CDN 離線單檔雙欄閱讀器（目前版本：V2）
+├── CHANGELOG.md                             # 版本更新紀錄
 ├── paper-bilingual-translator/              # 軌道 A：Antigravity Agent Skill
 │   ├── SKILL.md                             # 三階段精譯工作流與 Google Drive 讀取規範
 │   └── scripts/
@@ -67,4 +68,29 @@ python3 paper-bilingual-translator/scripts/extract_blocks.py "paper.pdf" --forma
 
 1. 直接雙擊本機的 `BilingualReader.html`（支援 `file://` 協議，無需任何網路連線或外部 CDN，內建 `PDF.js`、`marked.js` 與 `KaTeX` 及其字型）。
 2. 點擊工具列按鈕（或直接將檔案拖曳進視窗）載入原版 `.pdf` 與翻譯後的 `*_zh.md`。
-3. 享受**左指右亮、右指左亮**的雙向懸停高亮與平滑置中捲動對照體驗，並可隨時縮放 PDF、拖曳調整左右欄寬度或切換同步開關。
+3. 享受**左指右亮、右指左亮**的雙向懸停高亮與平滑置中捲動對照體驗，並可隨時縮放 PDF、拖曳調整左右欄寬度或切換閱讀設定：
+   * 按 **`S`** 鍵可快速開關「同步對齊」，避免滑鼠游標移往工具列時誤觸其他段落而跑開；暫停時會鎖定當前高亮段落，點擊任一段落仍可單次手動對齊。
+   * 工具列支援**輸入頁碼按 `Enter` 跳轉**與上／下一頁按鈕，並可按 **`P`** 鍵在「連續捲動」與「單頁檢視」之間切換（單頁模式支援 `PageUp`／`PageDown` 翻頁，右側雙向同步時也會自動切頁）。
+   * 點擊工具列左上角的 **`V2`** 標記可開啟內建的快捷鍵與版本更新紀錄視窗。
+
+---
+
+### 4. 版本發布與雲端同步流程（Release Workflow）
+
+每次更新 `BilingualReader.html` 並推送（`git push`）至 GitHub 時，需同步執行以下發布流程：
+1. 更新 `BilingualReader.html` 內的 `<title>`、工具列版本徽章（`V<N>`）與內建版本更新紀錄視窗，並同步維護 [`CHANGELOG.md`](./CHANGELOG.md) 與 `README.md`。
+2. 提交並推送變更至 GitHub 遠端儲存庫（`git push`）。
+3. 將最新版的 `BilingualReader.html` 更名為 **`BilingualReader_V<版本號>.html`**（例如 `BilingualReader_V2.html`），上傳至 Google Drive 的 **`Paper_Translate` 資料夾主層**（Folder ID: `1tSvWXtaXRlWVBxhE9dV8ABa9OCXloIlI`）：
+   ```bash
+   cp BilingualReader.html /tmp/BilingualReader_V2.html
+   gdrive mutate upload /tmp/BilingualReader_V2.html --parent 1tSvWXtaXRlWVBxhE9dV8ABa9OCXloIlI --mime-type "text/html"
+   ```
+   （若同版號檔案已存在於主層，則以 `gdrive mutate update <FILE_ID> /tmp/BilingualReader_V<N>.html` 原地更新。）
+
+---
+
+## 版本更新紀錄
+
+目前版本：**V2**（完整變更請見 [`CHANGELOG.md`](./CHANGELOG.md)）。
+* **V2 (2026-11-23)**：新增 `S` 鍵「同步對齊」快捷鍵與高亮鎖定、頁碼輸入跳轉與上／下一頁控制、`P` 鍵「單頁檢視」切換、修正放大 PDF 時水平捲軸無法捲至左右邊界的問題、新增工具列 `V2` 版本更新紀錄視窗，並建立推送同步上傳 `BilingualReader_V<N>.html` 至 Google Drive `Paper_Translate` 主層的發布流程。
+* **V1 (2026-11-23)**：初始版本發布（雙欄座標提取、三階段繁中精譯與 Zero-CDN 離線雙欄閱讀器）。
