@@ -68,6 +68,7 @@ Translate all blocks in section order:
 1. **Preserve every sync marker verbatim**: Every translated paragraph MUST be immediately preceded by its exact `<!-- sync: {"id": "...", "page": ..., "bbox": [...]} -->` HTML comment on its own line. Do NOT alter `id`, `page`, or `bbox` values, and do NOT merge or split blocks with different `id`s.
 2. **First-occurrence term annotation**: On the first appearance of a key technical term in the body text, format it as `繁體中文（English Term）`, e.g., `電化學二氧化碳還原反應（electrochemical $\text{CO}_2$ reduction reaction, $\text{CO}_2\text{RR}$）`. Subsequent occurrences use the Traditional Chinese term or acronym consistently.
 3. **Markdown structure**: Format titles (`#`), section headings (`##`, `###`), figure/table captions (`**圖 1：**` / `**表 1：**`), and bullet lists cleanly using Markdown syntax right below their corresponding `<!-- sync: ... -->` comment.
+4. **Unified Markdown tables**: When an extracted block is a Markdown table (`| ... |`), keep the **entire table under its single `<!-- sync: ... -->` comment** as one intact Markdown table—never break table cells into separate paragraphs. Translate column headers and descriptive text cells into Taiwan academic Traditional Chinese, keep numerical values, units, chemical formulas, and CAS numbers locked verbatim, and keep visual/structure placeholder cells as `（見原文圖示）`.
 
 ### Pass 3: Taiwan Academic Polishing & Formula Locking
 

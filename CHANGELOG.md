@@ -14,6 +14,12 @@
 - **修正放大 PDF 時的水平捲軸錯位問題**：修正 `#pdf-container` 在放大後因 Flexbox 置中導致左側頁面邊緣溢出且水平捲軸無法捲動至最左／最右側的問題，並於縮放時保留目前閱讀頁碼。
 - **工具列版本標記與內建更新紀錄視窗**：於左上角新增 `V2` 版本徽章，點擊可檢視快捷鍵說明與完整版本更新紀錄（支援 `Esc` 關閉）。
 
+### 軌道 A（`extract_blocks.py` 與翻譯規範）
+- **表格自動偵測與單一 Markdown 表格整併**：於 `extract_blocks.py` 整合 PyMuPDF 表格偵測與儲存格文字裁切，自動合併跨行表頭與續行、將視覺／化學結構欄標註為 `（見原文圖示）`，並以單一 `<!-- sync: ... -->` 外框輸出完整 Markdown 表格（另提供 `--no-tables` 選項）。
+- **防止表格標題與雙欄正文交錯**：自動將緊鄰全寬表格上方的 `Table N` 標題綁定為全寬區塊，維持「左欄 → 右欄 → 表格標題 → 完整表格」的正確閱讀順序。
+- **頁眉過濾與軟連字號修正**：將預設 `header_margin` 調整為 `0.062` 以完整過濾期刊頁眉，並修正 Unicode 軟連字號（`U+00AD`）跨行斷字問題。
+- **更新 `SKILL.md` 翻譯規範**：明確規定統一 Markdown 表格區塊須保留單一表格結構翻譯、鎖定數值／單位／化學式／CAS 編號，不再拆散成零碎段落。
+
 ### 文件與發布流程
 - 新增 `CHANGELOG.md` 記錄版本演進，並更新 `README.md` 與 `paper-bilingual-translator/SKILL.md`。
 - 確立版本發布流程：每次推送新版本至 GitHub 時，同步將最新版 `BilingualReader.html` 更名為 `BilingualReader_V<版本號>.html` 並上傳至 Google Drive `Paper_Translate` 資料夾主層。
