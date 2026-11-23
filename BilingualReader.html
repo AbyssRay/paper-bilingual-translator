@@ -414,14 +414,185 @@
       position: relative;
     }
 
+    /* Collapsible PDF Sidebar (Thumbnails & Bookmarks) */
+    #pdf-sidebar {
+      width: 244px;
+      flex-shrink: 0;
+      height: 100%;
+      background: #1e293b;
+      color: #e2e8f0;
+      border-right: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.18s ease;
+    }
+
+    #pdf-sidebar.collapsed {
+      width: 0;
+      border-right-width: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .sidebar-tab {
+      flex: 1;
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .sidebar-tab:hover {
+      color: #f8fafc;
+      background: #1e293b;
+    }
+
+    .sidebar-tab.active {
+      background: #1e293b;
+      color: #fde047;
+      border-color: rgba(234, 179, 8, 0.45);
+    }
+
+    .sidebar-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 16px;
+      line-height: 1;
+      padding: 4px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .sidebar-close:hover {
+      background: #334155;
+      color: #f8fafc;
+    }
+
+    .sidebar-panel {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .sidebar-panel.active {
+      display: block;
+    }
+
+    .sidebar-empty {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      padding: 24px 10px;
+      line-height: 1.6;
+    }
+
+    .thumb-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: rgba(15, 23, 42, 0.45);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .thumb-item:hover {
+      background: rgba(51, 65, 85, 0.6);
+      border-color: #64748b;
+    }
+
+    .thumb-item.active {
+      background: rgba(234, 179, 8, 0.14);
+      border-color: #eab308;
+    }
+
+    .thumb-canvas {
+      display: block;
+      background: #ffffff;
+      border-radius: 2px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      max-width: 100%;
+      height: auto;
+    }
+
+    .thumb-label {
+      font-size: 11px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .thumb-item.active .thumb-label {
+      color: #fde047;
+      font-weight: 700;
+    }
+
+    .outline-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: #cbd5e1;
+      font-size: 12.5px;
+      line-height: 1.45;
+      padding: 6px 8px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      word-break: break-word;
+    }
+
+    .outline-item:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .outline-item.active {
+      background: rgba(234, 179, 8, 0.18);
+      color: #fde047;
+      font-weight: 600;
+    }
+
     #pdf-pane {
-      width: 50%;
+      flex: 1;
+      min-width: 220px;
       background: var(--bg-pane-left);
       padding: 0;
     }
 
     #md-pane {
       width: 50%;
+      min-width: 220px;
+      flex-shrink: 0;
       background: var(--bg-pane-right);
       padding: 28px 36px;
     }
@@ -487,6 +658,11 @@
       padding: 16px;
     }
 
+    #pdf-container.fit-page-mode {
+      min-height: 100%;
+      justify-content: center;
+    }
+
     .pdf-page-wrapper {
       position: relative;
       background: #ffffff;
@@ -496,11 +672,11 @@
       flex-shrink: 0;
     }
 
-    #pdf-container.single-page-mode .pdf-page-wrapper {
+    #pdf-container.fit-page-mode .pdf-page-wrapper {
       display: none;
     }
 
-    #pdf-container.single-page-mode .pdf-page-wrapper.current-page {
+    #pdf-container.fit-page-mode .pdf-page-wrapper.current-page {
       display: block;
     }
 
@@ -674,21 +850,26 @@
     </div>
 
     <div class="toolbar-group">
+      <button type="button" class="btn" id="sidebar-btn" title="開啟／隱藏縮圖與書籤側邊欄（快捷鍵：B）">
+        <span>📑 側邊欄</span>
+        <kbd class="kbd-hint">B</kbd>
+      </button>
+      <div class="divider"></div>
       <button class="btn" id="zoom-out" title="縮小">－</button>
       <span class="zoom-label" id="zoom-label">125%</span>
       <button class="btn" id="zoom-in" title="放大">＋</button>
-      <button class="btn" id="zoom-fit" title="符合左欄寬度">符合寬度</button>
-      <div class="divider"></div>
-      <div class="page-nav">
-        <button type="button" class="btn btn-icon" id="page-prev" title="上一頁（單頁模式可用 PageUp）" disabled>◀</button>
-        <input type="number" id="page-input" min="1" value="0" disabled aria-label="目前頁碼" title="輸入頁碼後按 Enter 跳轉" />
-        <span class="page-total" id="page-total">/ 0 頁</span>
-        <button type="button" class="btn btn-icon" id="page-next" title="下一頁（單頁模式可用 PageDown）" disabled>▶</button>
-      </div>
-      <button type="button" class="btn" id="view-mode-btn" title="切換連續捲動 / 單頁檢視（快捷鍵：P）">
-        <span>單頁檢視</span>
+      <button class="btn" id="zoom-fit" title="符合左欄寬度並連續捲動">符合寬度</button>
+      <button type="button" class="btn" id="view-mode-btn" title="縮放至視野可容納完整一頁，並可用滑鼠滾輪快速翻頁（快捷鍵：P）">
+        <span>符合完整一頁</span>
         <kbd class="kbd-hint">P</kbd>
       </button>
+      <div class="divider"></div>
+      <div class="page-nav">
+        <button type="button" class="btn btn-icon" id="page-prev" title="上一頁（可用 PageUp）" disabled>◀</button>
+        <input type="number" id="page-input" min="1" value="0" disabled aria-label="目前頁碼" title="輸入頁碼後按 Enter 跳轉" />
+        <span class="page-total" id="page-total">/ 0 頁</span>
+        <button type="button" class="btn btn-icon" id="page-next" title="下一頁（可用 PageDown）" disabled>▶</button>
+      </div>
       <div class="divider"></div>
       <label class="toggle-label" id="sync-toggle-label" title="滑鼠懸停時雙向同步對齊（快捷鍵：S）">
         <input type="checkbox" id="sync-toggle" checked />
@@ -699,6 +880,22 @@
   </header>
 
   <main class="workspace" id="workspace">
+    <aside id="pdf-sidebar" class="collapsed" aria-label="PDF 縮圖與書籤側邊欄">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs" role="tablist">
+          <button type="button" class="sidebar-tab active" id="tab-thumbs" data-tab="thumbs" role="tab" aria-selected="true">頁面縮圖</button>
+          <button type="button" class="sidebar-tab" id="tab-outline" data-tab="outline" role="tab" aria-selected="false">PDF 書籤</button>
+        </div>
+        <button type="button" class="sidebar-close" id="sidebar-close" title="隱藏側邊欄（快捷鍵：B）" aria-label="隱藏側邊欄">×</button>
+      </div>
+      <div class="sidebar-panel active" id="thumb-list" role="tabpanel">
+        <div class="sidebar-empty">載入 PDF 後將顯示各頁縮圖</div>
+      </div>
+      <div class="sidebar-panel" id="outline-list" role="tabpanel">
+        <div class="sidebar-empty">載入 PDF 後將顯示書籤目錄</div>
+      </div>
+    </aside>
+
     <section class="pane" id="pdf-pane">
       <div class="empty-state" id="pdf-empty">
         <h3>原版期刊 PDF 檢視區</h3>
@@ -715,7 +912,7 @@
         <h3>繁體中文精譯檢視區</h3>
         <p>點擊上方「載入翻譯 MD」按鈕，或直接將 <code>.md</code> 檔案拖曳至此視窗。</p>
         <p>支援 <code>&lt;!-- sync: ... --&gt;</code> 段落座標雙向高亮與 KaTeX 數學/化學公式渲染。</p>
-        <p>按 <code>S</code> 鍵可開關「同步對齊」、按 <code>P</code> 鍵可切換「單頁檢視」。</p>
+        <p>按 <code>S</code> 開關「同步對齊」、按 <code>P</code> 切換「符合完整一頁」、按 <code>B</code> 開關側邊欄。</p>
       </div>
       <div id="md-container"></div>
     </section>
@@ -734,8 +931,9 @@
         <p class="modal-section-title">快捷鍵與操作</p>
         <div class="shortcut-list">
           <kbd>S</kbd><span>快速開關「同步對齊」（暫停時游標移動不會讓畫面跑開）</span>
-          <kbd>P</kbd><span>切換「單頁檢視」與「連續捲動」模式</span>
-          <kbd>PageUp / PageDown</kbd><span>單頁檢視模式下快速切換上一頁 / 下一頁</span>
+          <kbd>P</kbd><span>切換「符合完整一頁」（自動縮放至視野容納完整一頁，並可用滑鼠滾輪快速翻頁）</span>
+          <kbd>B</kbd><span>開啟／隱藏左側邊欄（頁面縮圖與 PDF 書籤目錄）</span>
+          <kbd>滾輪 / PageUp / PageDown</kbd><span>「符合完整一頁」模式下快速切換上一頁／下一頁</span>
           <kbd>輸入頁碼 + Enter</kbd><span>在工具列頁碼框輸入目標頁數立即跳轉</span>
           <kbd>點擊段落</kbd><span>暫停同步時，點擊任一段落仍可單次手動對齊另一欄</span>
           <kbd>Esc</kbd><span>關閉本視窗</span>
@@ -747,7 +945,8 @@
           <ul>
             <li>新增 <code>S</code> 鍵快捷鍵切換「同步對齊」開關與底部即時提示，暫停時鎖定當前高亮段落並保留點擊單次手動對齊。</li>
             <li>新增工具列頁碼輸入框與上一頁／下一頁按鈕，支援輸入頁碼按 <code>Enter</code> 直接跳轉。</li>
-            <li>新增「單頁檢視」模式切換（快捷鍵 <code>P</code>，支援 <code>PageUp</code>／<code>PageDown</code> 翻頁，右側雙向同步時亦會自動切頁）。</li>
+            <li>新增「符合完整一頁」檢視模式（快捷鍵 <code>P</code>）：自動依視窗寬高縮放顯示完整單頁，支援滑鼠滾輪與 <code>PageUp</code>／<code>PageDown</code> 快速翻頁，右側雙向同步時亦會自動切頁。</li>
+            <li>新增可隱藏的左側邊欄（快捷鍵 <code>B</code>）：支援瀏覽「頁面縮圖」與「PDF 書籤目錄」，點擊縮圖或書籤即可直接跳轉至對應頁面。</li>
             <li>修正放大 PDF 頁面時底部水平捲軸無法捲動至最左側與最右側邊界的排版問題，並於縮放時維持目前閱讀頁碼。</li>
             <li>新增工具列版本標記（<code>V2</code>）與內建版本更新紀錄及快捷鍵視窗。</li>
           </ul>
@@ -817,12 +1016,18 @@
       const state = {
         pdfDoc: null,
         pdfScale: 1.25,
+        preFitScale: 1.25,
         totalPages: 0,
         currentPage: 1,
-        viewMode: "continuous", // "continuous" | "single"
+        viewMode: "continuous", // "continuous" | "fit-page"
+        sidebarOpen: false,
+        sidebarTab: "thumbs",   // "thumbs" | "outline"
         renderToken: 0,
-        syncBlocks: [],      // [{ id, page, bbox }]
-        syncMap: new Map(),  // id -> { pdfBox, mdBlock, page }
+        thumbToken: 0,
+        wheelCooldownUntil: 0,
+        resizeTimer: null,
+        syncBlocks: [],         // [{ id, page, bbox }]
+        syncMap: new Map(),     // id -> { pdfBox, mdBlock, page }
         activeId: null,
         syncEnabled: true,
         hoverTimer: null,
@@ -836,6 +1041,13 @@
       const mdInput = document.getElementById("md-input");
       const pdfStatus = document.getElementById("pdf-status");
       const mdStatus = document.getElementById("md-status");
+      const pdfSidebar = document.getElementById("pdf-sidebar");
+      const sidebarBtn = document.getElementById("sidebar-btn");
+      const sidebarClose = document.getElementById("sidebar-close");
+      const tabThumbs = document.getElementById("tab-thumbs");
+      const tabOutline = document.getElementById("tab-outline");
+      const thumbList = document.getElementById("thumb-list");
+      const outlineList = document.getElementById("outline-list");
       const pdfPane = document.getElementById("pdf-pane");
       const mdPane = document.getElementById("md-pane");
       const pdfContainer = document.getElementById("pdf-container");
@@ -886,14 +1098,180 @@
         if (pageNext) {
           pageNext.disabled = !hasPages || state.currentPage >= state.totalPages;
         }
+        updateActiveThumbnail();
+      }
+
+      function updateActiveThumbnail() {
+        if (!thumbList) return;
+        const items = thumbList.querySelectorAll(".thumb-item");
+        items.forEach((item) => {
+          const isCurrent = Number(item.dataset.page) === state.currentPage;
+          item.classList.toggle("active", isCurrent);
+          if (isCurrent && state.sidebarOpen && state.sidebarTab === "thumbs") {
+            item.scrollIntoView({ block: "nearest", inline: "nearest" });
+          }
+        });
+      }
+
+      function setSidebarTab(tab) {
+        state.sidebarTab = tab === "outline" ? "outline" : "thumbs";
+        if (tabThumbs) {
+          const active = state.sidebarTab === "thumbs";
+          tabThumbs.classList.toggle("active", active);
+          tabThumbs.setAttribute("aria-selected", String(active));
+        }
+        if (tabOutline) {
+          const active = state.sidebarTab === "outline";
+          tabOutline.classList.toggle("active", active);
+          tabOutline.setAttribute("aria-selected", String(active));
+        }
+        if (thumbList) thumbList.classList.toggle("active", state.sidebarTab === "thumbs");
+        if (outlineList) outlineList.classList.toggle("active", state.sidebarTab === "outline");
+        if (state.sidebarTab === "thumbs") {
+          updateActiveThumbnail();
+        }
+      }
+
+      function setSidebarOpen(open, showFeedback = false) {
+        state.sidebarOpen = Boolean(open);
+        if (pdfSidebar) {
+          pdfSidebar.classList.toggle("collapsed", !state.sidebarOpen);
+        }
+        if (sidebarBtn) {
+          sidebarBtn.classList.toggle("btn-active", state.sidebarOpen);
+          sidebarBtn.setAttribute("aria-expanded", String(state.sidebarOpen));
+        }
+        if (state.sidebarOpen && state.sidebarTab === "thumbs") {
+          updateActiveThumbnail();
+        }
+        if (state.viewMode === "fit-page" && state.pdfDoc) {
+          clearTimeout(state.resizeTimer);
+          state.resizeTimer = setTimeout(() => {
+            reapplyFitPageScale();
+          }, 210);
+        }
+        if (showFeedback) {
+          showToast(
+            state.sidebarOpen
+              ? "📑 已開啟縮圖與書籤側邊欄（按 B 隱藏）"
+              : "📑 已隱藏側邊欄（按 B 開啟）"
+          );
+        }
+      }
+
+      async function renderThumbnails() {
+        if (!state.pdfDoc || !thumbList) return;
+        const token = ++state.thumbToken;
+        thumbList.innerHTML = "";
+        const total = state.pdfDoc.numPages;
+
+        for (let pageNum = 1; pageNum <= total; pageNum++) {
+          if (token !== state.thumbToken) return;
+          const page = await state.pdfDoc.getPage(pageNum);
+          if (token !== state.thumbToken) return;
+
+          const baseVp = page.getViewport({ scale: 1.0 });
+          const thumbScale = Math.min(0.45, 168 / baseVp.width);
+          const vp = page.getViewport({ scale: thumbScale });
+
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "thumb-item" + (pageNum === state.currentPage ? " active" : "");
+          item.dataset.page = String(pageNum);
+          item.title = `跳轉至第 ${pageNum} 頁`;
+
+          const canvas = document.createElement("canvas");
+          canvas.className = "thumb-canvas";
+          canvas.width = Math.max(1, Math.floor(vp.width));
+          canvas.height = Math.max(1, Math.floor(vp.height));
+
+          const label = document.createElement("span");
+          label.className = "thumb-label";
+          label.textContent = `第 ${pageNum} 頁`;
+
+          item.appendChild(canvas);
+          item.appendChild(label);
+          item.addEventListener("click", () => {
+            goToPage(pageNum);
+            item.blur();
+          });
+
+          thumbList.appendChild(item);
+
+          const ctx = canvas.getContext("2d");
+          await page.render({ canvasContext: ctx, viewport: vp }).promise;
+        }
+      }
+
+      async function resolveOutlineDest(dest) {
+        if (!state.pdfDoc || !dest) return null;
+        try {
+          let destArray = dest;
+          if (typeof dest === "string") {
+            destArray = await state.pdfDoc.getDestination(dest);
+          }
+          if (!Array.isArray(destArray) || !destArray[0]) return null;
+          const ref = destArray[0];
+          if (typeof ref === "number") {
+            return ref + 1;
+          }
+          const pageIndex = await state.pdfDoc.getPageIndex(ref);
+          return pageIndex + 1;
+        } catch {
+          return null;
+        }
+      }
+
+      async function renderOutline() {
+        if (!state.pdfDoc || !outlineList) return;
+        outlineList.innerHTML = '<div class="sidebar-empty">正在讀取書籤目錄…</div>';
+        try {
+          const outline = await state.pdfDoc.getOutline();
+          outlineList.innerHTML = "";
+          if (!outline || outline.length === 0) {
+            outlineList.innerHTML = '<div class="sidebar-empty">此 PDF 未內嵌書籤目錄</div>';
+            return;
+          }
+
+          function buildItems(items, depth) {
+            for (const item of items) {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "outline-item";
+              btn.style.paddingLeft = `${8 + Math.min(depth, 5) * 14}px`;
+              btn.textContent = item.title || "（無標題書籤）";
+              btn.title = item.title || "";
+              btn.addEventListener("click", async () => {
+                outlineList.querySelectorAll(".outline-item.active").forEach((el) => el.classList.remove("active"));
+                btn.classList.add("active");
+                const targetPage = await resolveOutlineDest(item.dest);
+                if (targetPage) {
+                  goToPage(targetPage);
+                } else {
+                  showToast("⚠️ 此書籤未指定有效頁碼");
+                }
+                btn.blur();
+              });
+              outlineList.appendChild(btn);
+
+              if (item.items && item.items.length > 0) {
+                buildItems(item.items, depth + 1);
+              }
+            }
+          }
+
+          buildItems(outline, 0);
+        } catch {
+          outlineList.innerHTML = '<div class="sidebar-empty">無法讀取此 PDF 的書籤目錄</div>';
+        }
       }
 
       function applyViewMode() {
-        const isSingle = state.viewMode === "single";
-        pdfContainer.classList.toggle("single-page-mode", isSingle);
+        const isFitPage = state.viewMode === "fit-page";
+        pdfContainer.classList.toggle("fit-page-mode", isFitPage);
         if (viewModeBtn) {
-          viewModeBtn.classList.toggle("btn-active", isSingle);
-          viewModeBtn.setAttribute("aria-pressed", String(isSingle));
+          viewModeBtn.classList.toggle("btn-active", isFitPage);
+          viewModeBtn.setAttribute("aria-pressed", String(isFitPage));
         }
         const wrappers = pdfContainer.querySelectorAll(".pdf-page-wrapper");
         wrappers.forEach((w) => {
@@ -914,8 +1292,9 @@
         updatePageNavUI();
 
         if (!scroll) return;
-        if (state.viewMode === "single") {
+        if (state.viewMode === "fit-page") {
           pdfPane.scrollTop = 0;
+          pdfPane.scrollLeft = 0;
         } else {
           const target = pdfContainer.querySelector(`.pdf-page-wrapper[data-page="${clamped}"]`);
           if (target) {
@@ -924,24 +1303,53 @@
         }
       }
 
-      function setViewMode(mode, showFeedback = false) {
-        state.viewMode = mode === "single" ? "single" : "continuous";
-        applyViewMode();
-        if (state.totalPages > 0) {
-          if (state.viewMode === "single") {
+      async function computeFitPageScale() {
+        if (!state.pdfDoc) return state.pdfScale;
+        const page = await state.pdfDoc.getPage(state.currentPage || 1);
+        const vp = page.getViewport({ scale: 1.0 });
+        const availW = Math.max(160, pdfPane.clientWidth - 36);
+        const availH = Math.max(160, pdfPane.clientHeight - 36);
+        const scale = Math.min(availW / vp.width, availH / vp.height);
+        return Math.max(0.25, Math.min(3.0, +scale.toFixed(2)));
+      }
+
+      async function reapplyFitPageScale() {
+        if (state.viewMode !== "fit-page" || !state.pdfDoc) return;
+        const nextScale = await computeFitPageScale();
+        if (Math.abs(nextScale - state.pdfScale) >= 0.02) {
+          state.pdfScale = nextScale;
+          await renderPDF();
+        }
+      }
+
+      async function setViewMode(mode, showFeedback = false) {
+        const nextMode = mode === "fit-page" ? "fit-page" : "continuous";
+        if (nextMode === state.viewMode) return;
+
+        if (nextMode === "fit-page") {
+          state.preFitScale = state.pdfScale;
+          state.viewMode = "fit-page";
+          applyViewMode();
+          if (state.pdfDoc) {
+            state.pdfScale = await computeFitPageScale();
+            await renderPDF();
             pdfPane.scrollTop = 0;
-          } else {
-            const target = pdfContainer.querySelector(`.pdf-page-wrapper[data-page="${state.currentPage}"]`);
-            if (target) {
-              target.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" });
-            }
+            pdfPane.scrollLeft = 0;
+          }
+        } else {
+          state.viewMode = "continuous";
+          applyViewMode();
+          if (state.pdfDoc) {
+            state.pdfScale = state.preFitScale || 1.25;
+            await renderPDF();
           }
         }
+
         if (showFeedback) {
           showToast(
-            state.viewMode === "single"
-              ? "📄 已切換為「單頁檢視」模式（按 P 切回連續捲動，PageUp/PageDown 翻頁）"
-              : "📜 已切換為「連續捲動」模式（按 P 切換單頁檢視）"
+            state.viewMode === "fit-page"
+              ? "🗎 已切換為「符合完整一頁」（可用滑鼠滾輪快速翻頁，按 P 切回連續捲動）"
+              : "📜 已切換為「連續捲動」模式（按 P 切換符合完整一頁）"
           );
         }
       }
@@ -996,7 +1404,7 @@
           if (entry.mdBlock) entry.mdBlock.classList.add("active");
           if (entry.page && state.totalPages > 0) {
             state.currentPage = entry.page;
-            if (state.viewMode === "single" && sourcePane === "right") {
+            if (state.viewMode === "fit-page" && sourcePane === "right") {
               applyViewMode();
             }
             updatePageNavUI();
@@ -1009,7 +1417,7 @@
           if (sourcePane === "left" && entry.mdBlock) {
             scrollElementToCenter(mdPane, entry.mdBlock);
           } else if (sourcePane === "right" && entry.pdfBox) {
-            if (state.viewMode === "single" && entry.page && state.currentPage !== entry.page) {
+            if (state.viewMode === "fit-page" && entry.page && state.currentPage !== entry.page) {
               goToPage(entry.page, { scroll: false });
             }
             scrollElementToCenter(pdfPane, entry.pdfBox);
@@ -1237,7 +1645,12 @@
             state.currentPage = 1;
             pdfStatus.textContent = file.name;
             pdfStatus.classList.add("loaded");
+            if (state.viewMode === "fit-page") {
+              state.pdfScale = await computeFitPageScale();
+            }
             await renderPDF();
+            renderThumbnails();
+            renderOutline();
           } catch (err) {
             alert("載入 PDF 失敗：" + err.message);
             console.error(err);
@@ -1296,21 +1709,58 @@
         }
       });
 
-      // 9. Zoom, Page Navigation & View Mode
+      // 9. Sidebar, Zoom, Page Navigation & Fit-Full-Page Mode
+      if (sidebarBtn) {
+        sidebarBtn.addEventListener("click", () => {
+          setSidebarOpen(!state.sidebarOpen, true);
+          sidebarBtn.blur();
+        });
+      }
+      if (sidebarClose) {
+        sidebarClose.addEventListener("click", () => {
+          setSidebarOpen(false, false);
+          sidebarClose.blur();
+        });
+      }
+      if (tabThumbs) {
+        tabThumbs.addEventListener("click", () => {
+          setSidebarTab("thumbs");
+          tabThumbs.blur();
+        });
+      }
+      if (tabOutline) {
+        tabOutline.addEventListener("click", () => {
+          setSidebarTab("outline");
+          tabOutline.blur();
+        });
+      }
+
       document.getElementById("zoom-in").addEventListener("click", () => {
+        if (state.viewMode === "fit-page") {
+          state.viewMode = "continuous";
+          applyViewMode();
+        }
         state.pdfScale = Math.min(3.0, +(state.pdfScale + 0.15).toFixed(2));
         renderPDF();
       });
       document.getElementById("zoom-out").addEventListener("click", () => {
-        state.pdfScale = Math.max(0.5, +(state.pdfScale - 0.15).toFixed(2));
+        if (state.viewMode === "fit-page") {
+          state.viewMode = "continuous";
+          applyViewMode();
+        }
+        state.pdfScale = Math.max(0.25, +(state.pdfScale - 0.15).toFixed(2));
         renderPDF();
       });
       document.getElementById("zoom-fit").addEventListener("click", async () => {
         if (!state.pdfDoc) return;
+        if (state.viewMode === "fit-page") {
+          state.viewMode = "continuous";
+          applyViewMode();
+        }
         const page = await state.pdfDoc.getPage(state.currentPage || 1);
         const vp = page.getViewport({ scale: 1.0 });
         const availableWidth = pdfPane.clientWidth - 48;
-        state.pdfScale = Math.max(0.5, +(availableWidth / vp.width).toFixed(2));
+        state.pdfScale = Math.max(0.25, +(availableWidth / vp.width).toFixed(2));
         renderPDF();
       });
 
@@ -1353,7 +1803,7 @@
       }
       if (viewModeBtn) {
         viewModeBtn.addEventListener("click", () => {
-          setViewMode(state.viewMode === "single" ? "continuous" : "single", true);
+          setViewMode(state.viewMode === "fit-page" ? "continuous" : "fit-page", true);
           viewModeBtn.blur();
         });
       }
@@ -1410,8 +1860,11 @@
           setSyncEnabled(!state.syncEnabled, true);
         } else if (e.key === "p" || e.key === "P") {
           e.preventDefault();
-          setViewMode(state.viewMode === "single" ? "continuous" : "single", true);
-        } else if (state.viewMode === "single" && state.totalPages > 0) {
+          setViewMode(state.viewMode === "fit-page" ? "continuous" : "fit-page", true);
+        } else if (e.key === "b" || e.key === "B") {
+          e.preventDefault();
+          setSidebarOpen(!state.sidebarOpen, true);
+        } else if (state.viewMode === "fit-page" && state.totalPages > 0) {
           if (e.key === "PageUp") {
             e.preventDefault();
             goToPage(state.currentPage - 1);
@@ -1422,9 +1875,25 @@
         }
       });
 
+      // Mouse wheel page-flipping in "fit-page" mode
+      pdfPane.addEventListener("wheel", (e) => {
+        if (state.viewMode !== "fit-page" || state.totalPages <= 0) return;
+        if (e.ctrlKey || e.metaKey) return;
+        e.preventDefault();
+        if (Math.abs(e.deltaY) < 4) return;
+        const now = Date.now();
+        if (now < state.wheelCooldownUntil) return;
+        state.wheelCooldownUntil = now + 150;
+        if (e.deltaY > 0) {
+          goToPage(state.currentPage + 1);
+        } else {
+          goToPage(state.currentPage - 1);
+        }
+      }, { passive: false });
+
       // Update current page number on scroll (continuous mode)
       pdfPane.addEventListener("scroll", () => {
-        if (state.totalPages === 0 || state.viewMode === "single") return;
+        if (state.totalPages === 0 || state.viewMode === "fit-page") return;
         const wrappers = pdfContainer.querySelectorAll(".pdf-page-wrapper");
         const paneMid = pdfPane.getBoundingClientRect().top + pdfPane.clientHeight * 0.4;
         for (const w of wrappers) {
@@ -1440,6 +1909,14 @@
         }
       });
 
+      window.addEventListener("resize", () => {
+        if (state.viewMode !== "fit-page" || !state.pdfDoc) return;
+        clearTimeout(state.resizeTimer);
+        state.resizeTimer = setTimeout(() => {
+          reapplyFitPageScale();
+        }, 160);
+      });
+
       // 10. Draggable Resizer
       let isResizing = false;
       resizer.addEventListener("mousedown", () => {
@@ -1450,15 +1927,17 @@
       document.addEventListener("mousemove", (e) => {
         if (!isResizing) return;
         const rect = workspace.getBoundingClientRect();
-        const pct = Math.max(20, Math.min(80, ((e.clientX - rect.left) / rect.width) * 100));
-        pdfPane.style.width = `${pct}%`;
-        mdPane.style.width = `${100 - pct}%`;
+        const rightPct = Math.max(20, Math.min(75, ((rect.right - e.clientX) / rect.width) * 100));
+        mdPane.style.width = `${rightPct}%`;
       });
       document.addEventListener("mouseup", () => {
         if (!isResizing) return;
         isResizing = false;
         resizer.classList.remove("dragging");
         document.body.style.cursor = "";
+        if (state.viewMode === "fit-page" && state.pdfDoc) {
+          reapplyFitPageScale();
+        }
       });
     })();
   </script>
